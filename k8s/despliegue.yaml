@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: d-$(name)
+  namespace: $(nsmtls)
+  labels:
+    app: $(name)-d
+spec:
+  replicas: $(replicas)
+  minReadySeconds: $(minReadySeconds)
+  selector:
+    matchLabels:
+      app: $(name)-d
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: $(name)-d
+        tier: backend
+    spec:
+      containers:
+      - name: $(name)
+        image:  $(RegistryURL)/$(repository):latest
+        resources:
+          limits:
+            memory: $(limits.memory)
+            cpu: (limits.cpu)
+          requests:
+            memory: $(requests.memory)
+            cpu: $(requests.cpu)
+        ports:
+        - containerPort: 8081
+        env:
+          - name: TZ
+            value: America/El_Salvador

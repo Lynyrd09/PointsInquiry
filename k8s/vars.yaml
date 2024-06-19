@@ -1,0 +1,27 @@
+dev:
+    replicas: 1
+    minReadySeconds: 7
+    limits:
+        memory: 400Mi
+        cpu: 100m
+    requests:
+        memory: 400Mi
+        cpu: 100m
+qa:
+    replicas: 2
+    minReadySeconds: 7
+    limits:
+        memory: 512Mi
+        cpu: 500m
+    requests:
+        memory: 512Mi
+        cpu: 500m
+prod:
+    replicas: 1
+    minReadySeconds: 7
+    limits:
+        memory: 512Mi
+        cpu: 500m
+    requests:
+        memory: 512Mi
+        cpu: 500m

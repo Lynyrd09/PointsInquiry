@@ -1,0 +1,10 @@
+FROM dockeragentsbancoagricola.azurecr.io/hardeningso:latest
+
+EXPOSE 8081
+ARG environment
+ARG namejar     
+
+ENV prof=${environment}
+ENV JAVA_TOOL_OPTIONS="-Xms500m -Xmx3584m -XX:+UseG1GC -XX:InitiatingHeapOccupancyPercent=35"
+COPY orquestador-puntos.jar orquestador-puntos.jar
+ENTRYPOINT ["java", "-Dspring.profiles.active=${prof}", "-jar", "orquestador-puntos.jar"]

@@ -1,0 +1,22 @@
+FROM mcr.microsoft.com/openjdk/jdk:17-ubuntu
+# This lines was add for monitoring test
+RUN apt-get update && apt-get upgrade -y && apt-get install -y openssl
+RUN apt-get update && apt-get upgrade -y && apt-get install -y iputils-ping
+RUN apt-get update && apt-get upgrade -y && apt-get install -y procps
+RUN apt-get update && apt-get upgrade -y && apt-get install -y net-tools
+RUN apt-get update && apt-get upgrade -y && apt-get install -y sysstat
+RUN apt-get update && apt-get upgrade -y && apt-get install -y netcat
+RUN apt-get update && apt-get upgrade -y && apt-get install -y traceroute
+# This lines was add for monitoring test
+RUN groupadd -r apigroup && useradd -r -g apigroup apiuser
+RUN mkdir /app
+RUN chown apiuser:apigroup /app
+RUN chmod 0777 /app
+USER apiuser
+
+EXPOSE 8081
+
+ARG environment
+ENV prof=${environment}
+COPY orquestador-puntos.jar orquestador-puntos.jar
+ENTRYPOINT ["java", "-Dspring.profiles.active=${prof}", "-jar", "orquestador-puntos.jar"]

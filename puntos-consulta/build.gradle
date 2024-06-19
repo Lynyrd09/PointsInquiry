@@ -1,0 +1,109 @@
+plugins {
+	id 'org.springframework.boot' version '3.1.6'
+	id 'io.spring.dependency-management' version '1.1.0'
+	id 'java'
+	id 'jacoco'
+	id 'org.sonarqube' version "4.4.1.3373"
+}
+
+group = 'com.orquestador'
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+	maven { url 'https://repo.spring.io/milestone' }
+	maven { url 'https://repo.spring.io/snapshot' }
+	maven { url 'https://plugins.gradle.org/m2/' }
+}
+
+bootJar {
+    archiveBaseName = 'orquestador-puntos'
+}
+
+ext {
+	set('springCloudAzureVersion', "5.3.0")
+	set('logback.version', '1.4.14')
+}
+
+compileJava {options.encoding = "UTF-8"}
+compileTestJava {options.encoding = "UTF-8"}
+
+dependencies {
+
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter'
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
+	testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation'
+	implementation group: 'org.springframework.boot', name: 'spring-boot-devtools'
+
+	implementation 'org.springdoc:springdoc-openapi-webflux-ui:1.6.14'
+	implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.14'
+	implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-common', version: '2.0.2'
+	implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.0.2'
+	
+	implementation group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
+	implementation group: 'org.json', name: 'json', version: '20231013'
+	
+	implementation group: 'com.azure', name: 'azure-core', version: '1.42.0'
+	implementation ('com.azure:azure-messaging-servicebus:7.14.4'){
+		exclude group: "io.netty", module:"netty-handler"
+	}
+	implementation group: 'com.azure', name: 'azure-identity', version: '1.1.1'
+		
+	implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'	
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.19.0'
+  
+	implementation group: 'org.yaml', name: 'snakeyaml', version: '2.0'
+	implementation group: 'com.fasterxml.woodstox', name: 'woodstox-core', version: '6.4.0'
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.16.0'
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.16.0'
+	
+	implementation group: 'io.netty', name: 'netty-codec-http', version: '4.1.100.Final'
+	implementation group: 'io.netty', name: 'netty-handler', version: '4.1.100.Final'
+	implementation ('io.netty:netty-codec:4.1.100.Final'){
+		exclude group: "io.netty", module:"netty-handler"
+		exclude group: 'io.netty', module: 'netty-codec-http'	
+	}
+	implementation group: 'io.projectreactor.netty', name: 'reactor-netty', version: '1.1.13'
+    implementation group: 'io.projectreactor.netty', name: 'reactor-netty-http', version: '1.1.13'
+	
+	implementation group: 'com.google.guava', name: 'guava', version: '32.1.2-jre'
+
+	
+	
+	testImplementation ('org.springframework.boot:spring-boot-starter-test'){
+		exclude group: 'com.vaadin.external.google', module:'android-json'
+	}
+	
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.1'        
+	testImplementation 'org.mockito:mockito-core:4.9.0'
+	testImplementation 'org.mockito:mockito-junit-jupiter:4.9.0'	
+}
+
+dependencyManagement {
+	imports {
+		"com.azure.spring:spring-cloud-azure-dependencies:${springCloudAzureVersion}"
+	}
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+test.finalizedBy jacocoTestReport
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+    	xml.enabled (true)
+    	csv.enabled (false)
+    	html.enabled (true)
+    }
+}
